@@ -1,4 +1,11 @@
-const AppLayout = ({ children, sidebar }) => {
+import type { ReactNode } from 'react';
+
+interface AppLayoutProps {
+  children: ReactNode;
+  sidebar?: ReactNode;
+}
+
+const AppLayout = ({ children, sidebar }: AppLayoutProps) => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Left Sidebar */}

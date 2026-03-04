@@ -40,24 +40,16 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is available
-      // const response = await apiClient.post('/auth/register', {
-      //   name: formData.name,
-      //   email: formData.email,
-      //   password: formData.password,
-      // });
-      // const { user, accessToken, refreshToken } = response.data;
-      
-      // Mock registration for demonstration (remove when backend is connected)
-      const mockUser = {
-        id: '1',
+      // Call register API endpoint
+      const response = await apiClient.post('/auth/register', {
         name: formData.name,
         email: formData.email,
-      };
-      const mockAccessToken = 'mock-access-token';
-      const mockRefreshToken = 'mock-refresh-token';
+        password: formData.password,
+      });
       
-      login(mockUser, mockAccessToken, mockRefreshToken);
+      const { user, accessToken, refreshToken } = response.data;
+      
+      login(user, accessToken, refreshToken);
       navigate('/'); // Redirect to home after register
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');

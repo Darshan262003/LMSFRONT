@@ -31,20 +31,11 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // TODO: Replace with actual API call when backend is available
-      // const response = await apiClient.post('/auth/login', formData);
-      // const { user, accessToken, refreshToken } = response.data;
+      // Call login API endpoint
+      const response = await apiClient.post('/auth/login', formData);
+      const { user, accessToken, refreshToken } = response.data;
       
-      // Mock login for demonstration (remove when backend is connected)
-      const mockUser = {
-        id: '1',
-        name: 'Test User',
-        email: formData.email,
-      };
-      const mockAccessToken = 'mock-access-token';
-      const mockRefreshToken = 'mock-refresh-token';
-      
-      login(mockUser, mockAccessToken, mockRefreshToken);
+      login(user, accessToken, refreshToken);
       navigate('/'); // Redirect to home after login
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');

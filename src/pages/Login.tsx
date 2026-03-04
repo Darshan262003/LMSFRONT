@@ -33,7 +33,12 @@ const Login = () => {
     try {
       // Call login API endpoint
       const response = await apiClient.post('/api/auth/login', formData);
+      console.log('=== LOGIN RESPONSE ===');
+      console.log('Full response:', response);
+      console.log('Response data:', response.data);
+      
       const { user, accessToken, refreshToken } = response.data;
+      console.log('Destructured values:', { user, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
       
       login(user, accessToken, refreshToken);
       navigate('/home'); // Redirect to home after login

@@ -21,19 +21,24 @@ interface AuthState {
 const getStoredAuth = () => {
   try {
     const stored = localStorage.getItem('auth-storage');
-    console.log('Reading auth from localStorage:', stored ? 'Found' : 'Not found');
+    console.log('[AuthStore] Reading auth from localStorage:', stored ? 'Found' : 'Not found');
+    console.log('[AuthStore] Raw stored value:', stored);
     if (stored) {
       const parsed = JSON.parse(stored);
-      console.log('Stored auth state:', parsed.state);
+      console.log('[AuthStore] Parsed auth state:', parsed.state);
       return parsed;
     }
   } catch (error) {
-    console.error('Failed to parse stored auth:', error);
+    console.error('[AuthStore] Failed to parse stored auth:', error);
   }
+  console.log('[AuthStore] Returning null for storedAuth');
   return null;
 };
 
+// Read immediately when module loads
+console.log('[AuthStore] Module loading, checking localStorage...');
 const storedAuth = getStoredAuth();
+console.log('[AuthStore] Initial storedAuth:', storedAuth);
 
 console.log('Initializing auth store with:', {
   hasStoredAuth: !!storedAuth,

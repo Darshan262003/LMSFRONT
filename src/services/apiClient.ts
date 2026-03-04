@@ -78,7 +78,7 @@ apiClient.interceptors.response.use(
       const refreshToken = authStore.getState().refreshToken;
       
       if (!refreshToken) {
-        authStore.logout();
+        (authStore as any).logout();
         return Promise.reject(error);
       }
 
@@ -90,7 +90,7 @@ apiClient.interceptors.response.use(
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
 
       // Update auth store with new tokens
-      authStore.refreshAuth(newAccessToken, newRefreshToken);
+      (authStore as any).refreshAuth(newAccessToken, newRefreshToken);
 
       // Process queued requests
       processQueue(null, newAccessToken);
@@ -100,7 +100,7 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError, null);
-      authStore.logout();
+      (authStore as any).logout();
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

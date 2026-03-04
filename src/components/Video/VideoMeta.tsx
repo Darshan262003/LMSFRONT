@@ -1,6 +1,6 @@
 import { CheckCircle } from 'lucide-react';
 
-const VideoMeta = ({ title, description, isCompleted }) => {
+const VideoMeta = ({ title, description, isCompleted }: any) => {
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">
       <div className="flex items-start justify-between mb-4">

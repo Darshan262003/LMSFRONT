@@ -17,6 +17,7 @@ interface Section {
 interface Tree {
   id: string;
   title: string;
+  subjectName?: string;
   sections?: Section[];
 }
 

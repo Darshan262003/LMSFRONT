@@ -7,7 +7,7 @@ const Button = ({
   className = '',
   type = 'button',
   ...props 
-}) => {
+}: any) => {
   const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variants = {

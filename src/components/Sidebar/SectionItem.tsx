@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronRight, Play, CheckCircle, Lock } from 'lucide-react';
 
-const SectionItem = ({ section, level = 0, onVideoClick }) => {
+const SectionItem = ({ section, level = 0, onVideoClick }: any) => {
   const isExpanded = true; // Could add state management for expand/collapse
 
-  const renderIcon = (video) => {
+  const renderIcon = (video: any) => {
     if (video.completed) {
       return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />;
     }
@@ -13,7 +13,7 @@ const SectionItem = ({ section, level = 0, onVideoClick }) => {
     return <Play className="w-4 h-4 text-blue-500 flex-shrink-0" />;
   };
 
-  const handleVideoClick = (video) => {
+  const handleVideoClick = (video: any) => {
     if (!video.locked && onVideoClick) {
       onVideoClick(video.id);
     }
@@ -37,7 +37,7 @@ const SectionItem = ({ section, level = 0, onVideoClick }) => {
       {/* Videos */}
       {isExpanded && section.videos && (
         <div className="space-y-1">
-          {section.videos.map((video) => (
+          {section.videos.map((video: any) => (
             <div
               key={video.id}
               onClick={() => handleVideoClick(video)}
@@ -57,7 +57,7 @@ const SectionItem = ({ section, level = 0, onVideoClick }) => {
       {/* Subsections */}
       {isExpanded && section.subsections && (
         <div className="space-y-2">
-          {section.subsections.map((subsection, index) => (
+          {section.subsections.map((subsection: any, index: any) => (
             <SectionItem
               key={subsection.id || index}
               section={subsection}

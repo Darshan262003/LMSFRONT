@@ -1,7 +1,7 @@
-const VideoProgressBar = ({ currentTime, duration }) => {
+const VideoProgressBar = ({ currentTime, duration }: any) => {
   const percentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: any) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;

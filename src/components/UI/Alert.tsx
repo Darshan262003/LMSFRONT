@@ -1,4 +1,4 @@
-const Alert = ({ type = 'info', message, onClose, className = '' }) => {
+const Alert = ({ type = 'info', message, onClose, className = '' }: any) => {
   const types = {
     info: 'bg-blue-100 border-blue-400 text-blue-700',
     success: 'bg-green-100 border-green-400 text-green-700',

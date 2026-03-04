@@ -41,16 +41,14 @@ const Register = () => {
 
     try {
       // Call register API endpoint
-      const response = await apiClient.post('/api/auth/register', {
+      await apiClient.post('/api/auth/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,
       });
       
-      const { user, accessToken, refreshToken } = response.data;
-      
-      login(user, accessToken, refreshToken);
-      navigate('/'); // Redirect to home after register
+      // Registration successful - redirect to login page
+      navigate('/login');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
       console.error(err);

@@ -18,12 +18,28 @@ const Home = () => {
     const fetchSubjects = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get('/api/subjects');
+        // Add cache control to prevent stale data
+        const response = await apiClient.get('/api/subjects', {
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
         setSubjects(response.data);
         setError(null);
       } catch (err) {
-        setError('Failed to load subjects');
-        console.error(err);
+        console.error('Error fetching subjects:', err);
+        
+        // Handle different error types
+        if (err.response?.status === 401) {
+          setError('Session expired. Please login again.');
+        } else if (err.response?.status === 403) {
+          setError('Access denied. Please login.');
+        } else if (err.code === 'ERR_NETWORK') {
+          setError('Network error. Please check your connection.');
+        } else {
+          setError('Failed to load subjects. Please try again.');
+        }
       } finally {
         setLoading(false);
       }

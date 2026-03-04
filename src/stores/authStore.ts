@@ -20,7 +20,7 @@ interface AuthState {
 
 export const authStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
@@ -34,13 +34,15 @@ export const authStore = create<AuthState>()(
           isAuthenticated: true,
         }),
 
-      logout: () =>
-        set({
+      logout: () => {
+        console.log('Logging out...');
+        return set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+      },
 
       refreshAuth: (newAccessToken, newRefreshToken) =>
         set({

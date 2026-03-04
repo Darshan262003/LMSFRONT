@@ -21,8 +21,11 @@ interface AuthState {
 const getStoredAuth = () => {
   try {
     const stored = localStorage.getItem('auth-storage');
+    console.log('Reading auth from localStorage:', stored ? 'Found' : 'Not found');
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      console.log('Stored auth state:', parsed.state);
+      return parsed;
     }
   } catch (error) {
     console.error('Failed to parse stored auth:', error);
@@ -32,6 +35,11 @@ const getStoredAuth = () => {
 
 const storedAuth = getStoredAuth();
 
+console.log('Initializing auth store with:', {
+  hasStoredAuth: !!storedAuth,
+  isAuthenticated: !!storedAuth?.state?.accessToken,
+});
+
 export const authStore = create<AuthState>((set) => ({
   // Initialize from localStorage if available
   user: storedAuth?.state?.user || null,
@@ -40,8 +48,10 @@ export const authStore = create<AuthState>((set) => ({
   isAuthenticated: !!storedAuth?.state?.accessToken,
 
       login: (userData, accessToken, refreshToken) => {
+        console.log('Login called with:', { user: userData, hasToken: !!accessToken });
+        
         // Store in localStorage
-        localStorage.setItem('auth-storage', JSON.stringify({
+        const authData = {
           state: {
             user: userData,
             accessToken,
@@ -49,7 +59,11 @@ export const authStore = create<AuthState>((set) => ({
             isAuthenticated: true,
           },
           version: 0
-        }));
+        };
+        
+        localStorage.setItem('auth-storage', JSON.stringify(authData));
+        console.log('Auth data saved to localStorage');
+        console.log('Stored value:', JSON.parse(localStorage.getItem('auth-storage') || 'null'));
           
         set({
           user: userData,
@@ -57,6 +71,8 @@ export const authStore = create<AuthState>((set) => ({
           refreshToken,
           isAuthenticated: true,
         });
+        
+        console.log('Auth store updated, isAuthenticated:', true);
       },
 
       logout: () => {

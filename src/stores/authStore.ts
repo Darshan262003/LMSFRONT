@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface User {
   id?: string;
@@ -17,36 +18,50 @@ interface AuthState {
   updateUser: (userData: User) => void;
 }
 
-export const authStore = create<AuthState>((set) => ({
-  user: null,
-  accessToken: null,
-  refreshToken: null,
-  isAuthenticated: false,
-
-  login: (userData, accessToken, refreshToken) =>
-    set({
-      user: userData,
-      accessToken,
-      refreshToken,
-      isAuthenticated: true,
-    }),
-
-  logout: () =>
-    set({
+export const authStore = create<AuthState>()(
+  persist(
+    (set) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
-    }),
 
-  refreshAuth: (newAccessToken, newRefreshToken) =>
-    set({
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    }),
+      login: (userData, accessToken, refreshToken) =>
+        set({
+          user: userData,
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        }),
 
-  updateUser: (userData) =>
-    set({
-      user: userData,
+      logout: () =>
+        set({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+        }),
+
+      refreshAuth: (newAccessToken, newRefreshToken) =>
+        set({
+          accessToken: newAccessToken,
+          refreshToken: newRefreshToken,
+        }),
+
+      updateUser: (userData) =>
+        set({
+          user: userData,
+        }),
     }),
-}));
+    {
+      name: 'auth-storage', // localStorage key
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        user: state.user,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    }
+  )
+);

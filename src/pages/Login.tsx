@@ -37,8 +37,18 @@ const Login = () => {
       console.log('Full response:', response);
       console.log('Response data:', response.data);
       
-      const { user, accessToken, refreshToken } = response.data;
-      console.log('Destructured values:', { user, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+      // Backend likely returns: { success: true, data: { user, accessToken, refreshToken } }
+      // Extract from nested structure
+      const responseData = response.data?.data || response.data;
+      const { user, accessToken, refreshToken } = responseData || {};
+      
+      console.log('Extracted values:', { user, hasAccessToken: !!accessToken, hasRefreshToken: !!refreshToken });
+      
+      if (!accessToken) {
+        console.error('No access token received from backend!');
+        setError('Login failed: No token received');
+        return;
+      }
       
       login(user, accessToken, refreshToken);
       navigate('/home'); // Redirect to home after login

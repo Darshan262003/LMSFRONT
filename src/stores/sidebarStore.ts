@@ -44,9 +44,7 @@ export const sidebarStore = create<SidebarState>((set, get) => ({
       // Extract the actual tree data from response.data.data
       const treeData = response.data?.data || response.data;
       
-      console.log('[SidebarStore] Fetched tree:', treeData);
-      console.log('[SidebarStore] Tree sections:', treeData?.sections);
-      
+      console.log('[SidebarStore] Setting tree with sections:', treeData.sections?.length);
       set({ tree: treeData, loading: false });
     } catch (error: any) {
       console.error('[SidebarStore] Failed to fetch tree:', error);

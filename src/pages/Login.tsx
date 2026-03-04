@@ -36,7 +36,7 @@ const Login = () => {
       const { user, accessToken, refreshToken } = response.data;
       
       login(user, accessToken, refreshToken);
-      navigate('/'); // Redirect to home after login
+      navigate('/home'); // Redirect to home after login
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
       console.error(err);

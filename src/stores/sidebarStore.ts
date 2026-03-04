@@ -39,8 +39,17 @@ export const sidebarStore = create<SidebarState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const response = await apiClient.get(`/api/subjects/${subjectId}/tree`);
-      set({ tree: response.data, loading: false });
+      
+      // Backend returns: { success: true, data: {...} }
+      // Extract the actual tree data from response.data.data
+      const treeData = response.data?.data || response.data;
+      
+      console.log('[SidebarStore] Fetched tree:', treeData);
+      console.log('[SidebarStore] Tree sections:', treeData?.sections);
+      
+      set({ tree: treeData, loading: false });
     } catch (error: any) {
+      console.error('[SidebarStore] Failed to fetch tree:', error);
       set({ error: error.message, loading: false });
     }
   },

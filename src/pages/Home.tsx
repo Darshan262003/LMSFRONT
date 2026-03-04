@@ -25,8 +25,19 @@ const Home = () => {
             'Pragma': 'no-cache'
           }
         });
-        setSubjects(response.data);
-        setError(null);
+        
+        // Backend returns: { success: true, data: [...], pagination: {...} }
+        // Extract the actual subjects array from response.data.data
+        const subjectsArray = response.data?.data || response.data;
+        
+        // Ensure it's an array before setting
+        if (Array.isArray(subjectsArray)) {
+          setSubjects(subjectsArray);
+          setError(null);
+        } else {
+          console.error('Expected array but got:', subjectsArray);
+          setError('Invalid data format received');
+        }
       } catch (err) {
         console.error('Error fetching subjects:', err);
         

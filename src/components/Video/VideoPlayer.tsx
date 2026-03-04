@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-// import apiClient from '../../services/apiClient';
+import apiClient from '../../services/apiClient';
 import { videoStore } from '../../stores/videoStore';
 import { sidebarStore } from '../../stores/sidebarStore';
 import VideoMeta from './VideoMeta';
@@ -46,34 +46,20 @@ const VideoPlayer = () => {
     const fetchVideoData = async () => {
       try {
         setLoading(true);
-        // TODO: Replace with actual API call when backend is available
-        // const response = await apiClient.get(`/videos/${videoId}`);
-        // setVideoData(response.data);
-          
-        // Mock video data for demonstration (remove when backend is connected)
-        const mockVideoData = {
-          id: videoId,
-          title: `Video ${videoId}`,
-          description: 'This is a sample video description',
-          youtubeVideoId: 'dQw4w9WgXcQ', // Rick Astley - Never Gonna Give You Up (test video)
-          nextVideoId: null,
-          prevVideoId: null,
-          lastPositionSeconds: 0,
-        };
-          
-        setVideoData(mockVideoData);
+        const response = await apiClient.get(`/api/videos/${videoId}`);
+        setVideoData(response.data);
           
         // Set next and prev video IDs if available
-        if (mockVideoData.nextVideoId) {
-          setNextVideoId(mockVideoData.nextVideoId);
+        if (response.data.nextVideoId) {
+          setNextVideoId(response.data.nextVideoId);
         }
-        if (mockVideoData.prevVideoId) {
-          setPrevVideoId(mockVideoData.prevVideoId);
+        if (response.data.prevVideoId) {
+          setPrevVideoId(response.data.prevVideoId);
         }
           
         // Restore last position if available
-        if (mockVideoData.lastPositionSeconds) {
-          setCurrentTime(mockVideoData.lastPositionSeconds);
+        if (response.data.lastPositionSeconds) {
+          setCurrentTime(response.data.lastPositionSeconds);
         }
           
         setError(null);
@@ -88,19 +74,18 @@ const VideoPlayer = () => {
     fetchVideoData();
   }, [videoId]);
 
-  // Send progress every 10 seconds (disabled in mock mode)
+  // Send progress every 10 seconds
   useEffect(() => {
     if (playerReady && videoId && currentTime > 0) {
-      // TODO: Re-enable progress tracking when backend is available
-      // progressIntervalRef.current = setInterval(async () => {
-      //   try {
-      //     await apiClient.post(`/progress/videos/${videoId}`, {
-      //       last_position_seconds: Math.floor(currentTime),
-      //     });
-      //   } catch (err) {
-      //     console.error('Failed to send progress:', err);
-      //   }
-      // }, 10000);
+      progressIntervalRef.current = setInterval(async () => {
+        try {
+          await apiClient.post(`/api/progress/videos/${videoId}`, {
+            last_position_seconds: Math.floor(currentTime),
+          });
+        } catch (err) {
+          console.error('Failed to send progress:', err);
+        }
+      }, 10000);
         
       return () => {
         if (progressIntervalRef.current) {
@@ -110,14 +95,13 @@ const VideoPlayer = () => {
     }
   }, [videoId, currentTime, playerReady]);
 
-  // Handle video end (disabled in mock mode)
+  // Handle video end
   const handleVideoEnd = async () => {
     try {
-      // TODO: Re-enable progress tracking when backend is available
-      // await apiClient.post(`/progress/videos/${videoId}`, {
-      //   last_position_seconds: Math.floor(duration),
-      //   is_completed: true,
-      // });
+      await apiClient.post(`/api/progress/videos/${videoId}`, {
+        last_position_seconds: Math.floor(duration),
+        is_completed: true,
+      });
         
       // Update stores
       setIsCompleted(true);

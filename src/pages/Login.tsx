@@ -32,7 +32,7 @@ const Login = () => {
 
     try {
       // Call login API endpoint
-      const response = await apiClient.post('/auth/login', formData);
+      const response = await apiClient.post('/api/auth/login', formData);
       const { user, accessToken, refreshToken } = response.data;
       
       login(user, accessToken, refreshToken);

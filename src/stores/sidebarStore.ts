@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-// import apiClient from '../services/apiClient';
+import apiClient from '../services/apiClient';
 
 interface Video {
   id: string;
@@ -38,35 +38,8 @@ export const sidebarStore = create<SidebarState>((set, get) => ({
   fetchTree: async (subjectId: string) => {
     set({ loading: true, error: null });
     try {
-      // TODO: Replace with actual API call when backend is available
-      // const response = await apiClient.get(`/subjects/${subjectId}/tree`);
-      // set({ tree: response.data, loading: false });
-      
-      // Mock tree data for demonstration (remove when backend is connected)
-      const mockTree = {
-        id: subjectId,
-        title: 'Sample Subject',
-        sections: [
-          {
-            id: '1',
-            title: 'Introduction',
-            videos: [
-              { id: '1', title: 'Welcome Video', completed: false },
-              { id: '2', title: 'Getting Started', completed: false },
-            ],
-          },
-          {
-            id: '2',
-            title: 'Advanced Topics',
-            videos: [
-              { id: '3', title: 'Deep Dive', completed: false },
-              { id: '4', title: 'Best Practices', completed: false },
-            ],
-          },
-        ],
-      };
-      
-      set({ tree: mockTree, loading: false });
+      const response = await apiClient.get(`/api/subjects/${subjectId}/tree`);
+      set({ tree: response.data, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
     }

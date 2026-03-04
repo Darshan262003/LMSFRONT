@@ -24,16 +24,8 @@ const Profile = () => {
     const fetchProfileStats = async () => {
       try {
         setLoading(true);
-        // TODO: Replace with actual API call when backend is available
-        // const response = await apiClient.get('/profile/stats');
-        // setStats(response.data);
-          
-        // Mock stats for demonstration (remove when backend is connected)
-        setStats({
-          videosCompleted: 5,
-          totalWatchTimeMinutes: 127,
-          subjectsEnrolled: 3,
-        });
+        const response = await apiClient.get('/api/profile/stats');
+        setStats(response.data);
         setError(null);
       } catch (err) {
         setError('Failed to load profile statistics');

@@ -41,7 +41,7 @@ const Register = () => {
 
     try {
       // Call register API endpoint
-      const response = await apiClient.post('/auth/register', {
+      const response = await apiClient.post('/api/auth/register', {
         name: formData.name,
         email: formData.email,
         password: formData.password,

@@ -89,7 +89,7 @@ apiClient.interceptors.response.use(
       const refreshToken = authStore.getState().refreshToken;
       
       if (!refreshToken) {
-        (authStore as any).logout();
+        authStore.getState().logout();
         window.location.href = '/login'; // Redirect to login
         return Promise.reject(error);
       }
@@ -102,7 +102,7 @@ apiClient.interceptors.response.use(
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data;
 
       // Update auth store with new tokens
-      (authStore as any).refreshAuth(newAccessToken, newRefreshToken);
+      authStore.getState().refreshAuth(newAccessToken, newRefreshToken);
 
       // Process queued requests
       processQueue(null, newAccessToken);
@@ -115,7 +115,7 @@ apiClient.interceptors.response.use(
       processQueue(refreshError, null);
       
       // Clear tokens and redirect to login on refresh failure
-      (authStore as any).logout();
+      authStore.getState().logout();
       window.location.href = '/login';
       
       return Promise.reject(refreshError);

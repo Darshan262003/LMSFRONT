@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface User {
   id?: string;
@@ -18,25 +17,54 @@ interface AuthState {
   updateUser: (userData: User) => void;
 }
 
-export const authStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      accessToken: null,
-      refreshToken: null,
-      isAuthenticated: false,
+// Get stored auth data from localStorage
+const getStoredAuth = () => {
+  try {
+    const stored = localStorage.getItem('auth-storage');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to parse stored auth:', error);
+  }
+  return null;
+};
 
-      login: (userData, accessToken, refreshToken) =>
+const storedAuth = getStoredAuth();
+
+export const authStore = create<AuthState>((set) => ({
+  // Initialize from localStorage if available
+  user: storedAuth?.state?.user || null,
+  accessToken: storedAuth?.state?.accessToken || null,
+  refreshToken: storedAuth?.state?.refreshToken || null,
+  isAuthenticated: !!storedAuth?.state?.accessToken,
+
+      login: (userData, accessToken, refreshToken) => {
+        // Store in localStorage
+        localStorage.setItem('auth-storage', JSON.stringify({
+          state: {
+            user: userData,
+            accessToken,
+            refreshToken,
+            isAuthenticated: true,
+          },
+          version: 0
+        }));
+          
         set({
           user: userData,
           accessToken,
           refreshToken,
           isAuthenticated: true,
-        }),
+        });
+      },
 
       logout: () => {
         console.log('Logging out...');
-        return set({
+        // Clear localStorage
+        localStorage.removeItem('auth-storage');
+          
+        set({
           user: null,
           accessToken: null,
           refreshToken: null,
@@ -44,26 +72,31 @@ export const authStore = create<AuthState>()(
         });
       },
 
-      refreshAuth: (newAccessToken, newRefreshToken) =>
+      refreshAuth: (newAccessToken, newRefreshToken) => {
+        // Update localStorage
+        const current = getStoredAuth();
+        if (current?.state) {
+          current.state.accessToken = newAccessToken;
+          current.state.refreshToken = newRefreshToken;
+          localStorage.setItem('auth-storage', JSON.stringify(current));
+        }
+        
         set({
           accessToken: newAccessToken,
           refreshToken: newRefreshToken,
-        }),
+        });
+      },
 
-      updateUser: (userData) =>
+      updateUser: (userData) => {
+        // Update localStorage
+        const current = getStoredAuth();
+        if (current?.state) {
+          current.state.user = userData;
+          localStorage.setItem('auth-storage', JSON.stringify(current));
+        }
+        
         set({
           user: userData,
-        }),
-    }),
-    {
-      name: 'auth-storage', // localStorage key
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        user: state.user,
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
-);
+        });
+      },
+    }));

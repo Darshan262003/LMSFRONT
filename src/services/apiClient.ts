@@ -20,6 +20,8 @@ const apiClient = axios.create({
 // Flag to prevent multiple refresh requests
 let isRefreshing = false;
 let failedQueue = [];
+let lastRefreshAttempt = 0;
+const REFRESH_COOLDOWN = 5000; // 5 seconds minimum between refresh attempts
 
 // Process failed queue after token refresh
 const processQueue = (error, token = null) => {
@@ -72,13 +74,23 @@ apiClient.interceptors.response.use(
     }
 
     originalRequest._retry = true;
+    
+    // Check if we're in a refresh cooldown period
+    const now = Date.now();
+    if (now - lastRefreshAttempt < REFRESH_COOLDOWN) {
+      console.warn('Refresh attempt too soon, waiting...');
+      await new Promise(resolve => setTimeout(resolve, REFRESH_COOLDOWN));
+    }
+    
     isRefreshing = true;
+    lastRefreshAttempt = now;
 
     try {
       const refreshToken = authStore.getState().refreshToken;
       
       if (!refreshToken) {
         (authStore as any).logout();
+        window.location.href = '/login'; // Redirect to login
         return Promise.reject(error);
       }
 
@@ -99,8 +111,13 @@ apiClient.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
+      console.error('Token refresh failed:', refreshError);
       processQueue(refreshError, null);
+      
+      // Clear tokens and redirect to login on refresh failure
       (authStore as any).logout();
+      window.location.href = '/login';
+      
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

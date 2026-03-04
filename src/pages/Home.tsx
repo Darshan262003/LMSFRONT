@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
- import apiClient from '../services/apiClient';
-// import Spinner from '../components/UI/Spinner';
-// import Alert from '../components/UI/Alert';
+import apiClient from '../services/apiClient';
+import Spinner from '../components/UI/Spinner';
+import Alert from '../components/UI/Alert';
 import Button from '../components/UI/Button';
 import { authStore } from '../stores/authStore';
 
@@ -10,12 +10,27 @@ const Home = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = authStore();
   
-  // Mock subjects for demonstration (remove when backend is connected)
-  const [subjects] = useState([
-    { id: '1', name: 'Introduction to Programming', description: 'Learn the basics of programming' },
-    { id: '2', name: 'Web Development', description: 'Build modern web applications' },
-    { id: '3', name: 'Data Structures', description: 'Master data structures and algorithms' },
-  ]);
+  const [subjects, setSubjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get('/api/subjects');
+        setSubjects(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load subjects');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchSubjects();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -40,7 +55,17 @@ const Home = () => {
         </p>
       </div>
 
-      {subjects.length === 0 ? (
+      {loading && (
+        <div className="flex items-center justify-center py-12">
+          <Spinner size="lg" />
+        </div>
+      )}
+
+      {error && (
+        <Alert type="error" message={error} onClose={() => setError(null)} />
+      )}
+
+      {!loading && !error && subjects.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No subjects available at the moment.</p>
         </div>

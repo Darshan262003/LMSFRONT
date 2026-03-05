@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Navbar from '../UI/Navbar';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -7,20 +8,21 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children, sidebar }: AppLayoutProps) => {
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Left Sidebar */}
-      {sidebar && (
-        <aside className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
-          {sidebar}
-        </aside>
-      )}
+    <div className="app-layout">
+      <Navbar />
+      <div className="app-content">
+        {/* Left Sidebar */}
+        {sidebar && (
+          <aside className="course-sidebar">
+            {sidebar}
+          </aside>
+        )}
 
-      {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto">
-        <div className="p-6">
+        {/* Main Content Area */}
+        <main className="main-content">
           {children}
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };

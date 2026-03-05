@@ -4,10 +4,10 @@ const SectionItem = ({ section, level = 0, onVideoClick }: any) => {
   const isExpanded = true; // Could add state management for expand/collapse
 
   const renderIcon = (video: any) => {
-    if (video.completed) {
+    if (video.isCompleted || video.completed) {
       return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />;
     }
-    if (video.locked) {
+    if (video.isLocked || video.locked) {
       return <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />;
     }
     return <Play className="w-4 h-4 text-blue-500 flex-shrink-0" />;
@@ -20,10 +20,10 @@ const SectionItem = ({ section, level = 0, onVideoClick }: any) => {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="section-item">
       {/* Section Header */}
       <div
-        className="flex items-center gap-2 py-2 px-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
+        className="section-header"
         style={{ marginLeft: `${level * 16}px` }}
       >
         {isExpanded ? (
@@ -31,24 +31,20 @@ const SectionItem = ({ section, level = 0, onVideoClick }: any) => {
         ) : (
           <ChevronRight className="w-4 h-4 text-gray-500" />
         )}
-        <h3 className="font-semibold text-gray-700 flex-1">{section.title}</h3>
+        <h3 className="section-title">{section.title}</h3>
       </div>
 
       {/* Videos */}
       {isExpanded && section.videos && (
-        <div className="space-y-1">
+        <div className="videos-list">
           {section.videos.map((video: any) => (
             <div
               key={video.id}
               onClick={() => handleVideoClick(video)}
-              className={`flex items-center gap-3 py-2 px-3 ml-6 rounded-lg cursor-pointer transition-colors ${
-                video.locked
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-gray-600 hover:bg-blue-50 hover:text-blue-600'
-              }`}
+              className={`video-item ${!video.isLocked && !video.locked ? 'clickable' : ''}`}
             >
               {renderIcon(video)}
-              <span className="flex-1 text-sm">{video.title}</span>
+              <span className="video-title">{video.title}</span>
             </div>
           ))}
         </div>

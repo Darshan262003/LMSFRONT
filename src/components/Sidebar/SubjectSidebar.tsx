@@ -43,25 +43,21 @@ const SubjectSidebar = () => {
   console.log('[SubjectSidebar] Sections:', tree.sections);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">{tree.subjectName}</h2>
+    <div className="subject-sidebar">
+      <h2 className="sidebar-title">{tree.subjectName || tree.title}</h2>
       
-      <div className="space-y-4">
-        {tree.sections?.map((section, index) => {
-          console.log('[SubjectSidebar] Rendering section:', section);
-          console.log('[SubjectSidebar] Section videos:', section.videos);
-          return (
-            <SectionItem 
-              key={section.id || index} 
-              section={section} 
-              level={0}
-              onVideoClick={(videoId) => {
-                console.log('[SubjectSidebar] Video clicked, navigating to:', `/subjects/${subjectId}/video/${videoId}`);
-                navigate(`/subjects/${subjectId}/video/${videoId}`);
-              }}
-            />
-          );
-        })}
+      <div className="sidebar-content">
+        {tree.sections?.map((section, index) => (
+          <SectionItem 
+            key={section.id || index} 
+            section={section} 
+            level={0}
+            onVideoClick={(videoId) => {
+              console.log('[SubjectSidebar] Video clicked, navigating to:', `/subjects/${subjectId}/video/${videoId}`);
+              navigate(`/subjects/${subjectId}/video/${videoId}`);
+            }}
+          />
+        ))}
       </div>
     </div>
   );

@@ -171,26 +171,47 @@ const VideoPlayer = () => {
 
   const youtubeEmbedUrl = `https://www.youtube.com/embed/${videoData.youtubeVideoId}?enablejsapi=1&start=${Math.floor(currentTime)}`;
 
+  // Get next/prev video IDs from video store
+  const { nextVideoId, prevVideoId } = videoStore() as any;
+
   return (
-    <div className="space-y-4">
+    <div className="video-page">
       {/* Video Player */}
-      <div className="aspect-video bg-black rounded-lg overflow-hidden">
+      <div className="video-player-wrapper">
         <iframe
           ref={iframeRef}
           src={youtubeEmbedUrl}
           title={videoData.title}
-          className="w-full h-full"
+          className="video-player-iframe"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
       </div>
 
-      {/* Video Info */}
-      <VideoMeta
-        title={videoData.title}
-        description={videoData.description}
-        isCompleted={isCompleted}
-      />
+      {/* Video Info & Navigation */}
+      <div className="video-meta">
+        <h1 className="video-title-large">{videoData.title}</h1>
+        {videoData.description && (
+          <p className="video-description-large">{videoData.description}</p>
+        )}
+        
+        <div className="video-navigation">
+          <button 
+            className="nav-button" 
+            onClick={() => prevVideoId && (window.location.href = `/subjects/${subjectId}/video/${prevVideoId}`)}
+            disabled={!prevVideoId}
+          >
+            ← Previous Video
+          </button>
+          <button 
+            className="nav-button" 
+            onClick={() => nextVideoId && (window.location.href = `/subjects/${subjectId}/video/${nextVideoId}`)}
+            disabled={!nextVideoId}
+          >
+            Next Video →
+          </button>
+        </div>
+      </div>
 
       {/* Progress Bar */}
       <VideoProgressBar

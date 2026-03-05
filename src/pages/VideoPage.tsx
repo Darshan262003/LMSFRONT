@@ -58,16 +58,39 @@ const VideoPage = () => {
     }
   }, [subjectId, videoId]);
 
-  // Helper function to extract YouTube ID from URL
-  function getYoutubeId(url: string): string {
+  // Helper function to extract YouTube ID and return embed URL
+  function getYoutubeEmbedUrl(url: string): string {
+    if (!url) return "";
+    
+    let videoId = "";
+    
     try {
-      const urlObj = new URL(url);
-      return urlObj.searchParams.get('v') || '';
+      // Handle youtu.be short URLs (e.g., https://youtu.be/bm0OyhwFDuY?si=...)
+      if (url.includes("youtu.be")) {
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+      } 
+      // Handle youtube.com/watch URLs (e.g., https://youtube.com/watch?v=...)
+      else if (url.includes("youtube.com/watch")) {
+        const urlObj = new URL(url);
+        videoId = urlObj.searchParams.get("v") || "";
+      }
+      // Handle youtube.com/embed URLs (already in correct format)
+      else if (url.includes("youtube.com/embed")) {
+        return url;
+      }
+      // Fallback: try to extract ID using regex
+      else {
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))(?<id>[a-zA-Z0-9_-]+)/);
+        videoId = match?.groups?.id || "";
+      }
     } catch (e) {
-      // If URL parsing fails, try regex fallback
-      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))(?<id>[a-zA-Z0-9_-]+)/);
-      return match?.groups?.id || '';
+      console.error('Failed to parse YouTube URL:', e);
+      // Last resort regex fallback
+      const match = url.match(/[?&]v=([^&]+)/);
+      videoId = match?.[1] || "";
     }
+    
+    return `https://www.youtube.com/embed/${videoId}`;
   }
 
   if (loading) {
@@ -90,6 +113,16 @@ const VideoPage = () => {
     );
   }
 
+  if (!video?.youtubeUrl) {
+    return (
+      <AppLayout sidebar={<SubjectSidebar />}>
+        <div className="max-w-4xl">
+          <Alert type="error" message="No video URL found" onClose={() => setError(null)} />
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout sidebar={<SubjectSidebar />}>
       <div className="max-w-5xl">
@@ -97,7 +130,7 @@ const VideoPage = () => {
         <div className="video-player-wrapper">
           <iframe
             className="video-player-iframe"
-            src={`https://www.youtube.com/embed/${getYoutubeId(video.youtubeUrl)}`}
+            src={getYoutubeEmbedUrl(video.youtubeUrl)}
             title={video.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen

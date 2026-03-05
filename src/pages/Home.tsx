@@ -70,10 +70,9 @@ const Home = () => {
       <Navbar />
       
       <div className="home-content">
-        <div className="page-header">
-          <h1 className="page-title">My Courses</h1>
-          <p className="page-subtitle">Continue learning where you left off</p>
-        </div>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">
+          Explore Courses
+        </h1>
 
         {loading && (
           <div className="loading-container">

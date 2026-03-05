@@ -14,7 +14,7 @@ const SectionItem = ({ section, level = 0, onVideoClick }: any) => {
   };
 
   const handleVideoClick = (video: any) => {
-    if (!video.locked && onVideoClick) {
+    if (!video.isLocked && !video.locked && onVideoClick) {
       onVideoClick(video.id);
     }
   };

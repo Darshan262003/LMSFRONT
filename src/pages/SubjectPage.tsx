@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import AppLayout from '../components/Layout/AppLayout';
 import SubjectSidebar from '../components/Sidebar/SubjectSidebar';
 import apiClient from '../services/apiClient';
@@ -9,6 +9,7 @@ import Alert from '../components/UI/Alert';
 interface Video {
   id: string;
   title: string;
+  youtubeUrl?: string;
   durationSeconds: number;
   orderIndex: number;
   isLocked: boolean;
@@ -32,6 +33,7 @@ interface SubjectTree {
 
 const SubjectPage = () => {
   const { subjectId } = useParams();
+  const navigate = useNavigate();
   const [tree, setTree] = useState<SubjectTree | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
